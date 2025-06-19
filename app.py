@@ -10,10 +10,16 @@ app = Flask(__name__)
 # === CONFIG ===
 TELEGRAM_BOT_TOKEN = '7251920125:AAEtmF2MJsSZ-x0MkssHpksCRuEtZsn9TvI'
 TELEGRAM_CHAT_ID = '1587098318'
-DETECTION_INTERVAL = 10  # Minimum seconds between two alerts
+DETECTION_INTERVAL = 10  # seconds between alerts
 
 # === Load YOLOv5 model ===
-model = YOLO("yolov5s.pt")  # Include this file in your Render repo
+try:
+    model = YOLO("yolov5s.pt")  # RECOMMENDED: smaller + better
+    print("[INFO] YOLOv5 model loaded successfully")
+except Exception as e:
+    print(f"[ERROR] Failed to load YOLO model: {e}")
+    model = None
+
 last_alert_time = 0
 
 # === Telegram alert ===
@@ -39,12 +45,20 @@ def send_telegram_alert():
 def upload():
     try:
         img_bytes = request.data
+        print(f"[INFO] Received upload: {len(img_bytes)} bytes")
+
         img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
 
+        if model is None:
+            return jsonify({"error": "Model not loaded"}), 500
+
         results = model(img)
-        people_count = 0
-        for r in results:
-            people_count += sum([1 for c in r.boxes.cls if int(c) == 0])  # class 0 = person
+
+        people_count = sum(
+            1 for r in results for c in r.boxes.cls if int(c) == 0  # class 0 = person
+        )
+
+        print(f"[INFO] People detected: {people_count}")
 
         if people_count > 0:
             send_telegram_alert()
@@ -55,6 +69,7 @@ def upload():
         })
 
     except Exception as e:
+        print(f"[ERROR] in /upload: {e}")
         return jsonify({
             "status": "error",
             "message": str(e)
@@ -63,7 +78,8 @@ def upload():
 # === Home Page ===
 @app.route('/')
 def index():
-    return "<h2>ESP32-CAM AI Detection Server is Running</h2>"
+    return "<h2>✅ ESP32-CAM AI Detection Server is Live</h2>"
 
+# === Run App ===
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
