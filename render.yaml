@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: esp32-cam-ai-detection
+    env: python
+    region: oregon  # or change to frankfurt, singapore, etc.
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    envVars:
+      - key: FLASK_ENV
+        value: production
+    autoDeploy: true
