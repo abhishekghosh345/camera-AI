@@ -42,12 +42,17 @@ def send_telegram_alert():
 
 # === Upload endpoint for ESP32-CAM ===
 @app.route('/upload', methods=['POST'])
+@app.route('/upload', methods=['POST'])
 def upload():
     try:
         img_bytes = request.data
         print(f"[INFO] Received upload: {len(img_bytes)} bytes")
 
         img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+        print(f"[INFO] Image size: {img.size}")
+
+        # ✅ Resize to YOLO-friendly size (if input is small)
+        img = img.resize((640, 480))
 
         if model is None:
             return jsonify({"error": "Model not loaded"}), 500
@@ -74,6 +79,7 @@ def upload():
             "status": "error",
             "message": str(e)
         }), 500
+
 
 # === Home Page ===
 @app.route('/')
