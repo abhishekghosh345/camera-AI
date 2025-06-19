@@ -49,10 +49,10 @@ def upload():
         print(f"[INFO] Received upload: {len(img_bytes)} bytes")
 
         img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
-        print(f"[INFO] Image size: {img.size}")
+        original_size = img.size
+        img = img.resize((640, 480))  # Force resize for better detection
+        print(f"[INFO] Resized from {original_size} to {img.size}")
 
-        # ✅ Resize to YOLO-friendly size (if input is small)
-        img = img.resize((640, 480))
 
         if model is None:
             return jsonify({"error": "Model not loaded"}), 500
