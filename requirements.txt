@@ -1,0 +1,7 @@
+flask
+ultralytics
+Pillow
+torch
+opencv-python-headless
+pandas
+requests
