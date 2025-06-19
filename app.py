@@ -8,8 +8,8 @@ from ultralytics import YOLO
 app = Flask(__name__)
 
 # === CONFIG ===
-TELEGRAM_BOT_TOKEN = '7251920125:AAEtmF2MJsSZ-x0MkssHpksCRuEtZsn9TvI'
-TELEGRAM_CHAT_ID = '1587098318'
+TELEGRAM_BOT_TOKEN = ''
+TELEGRAM_CHAT_ID = ''
 DETECTION_INTERVAL = 10  # seconds between alerts
 
 # === Load YOLOv5 model ===
