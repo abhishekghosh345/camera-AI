@@ -14,7 +14,7 @@ DETECTION_INTERVAL = 10  # seconds between alerts
 
 # === Load YOLOv5 model ===
 try:
-    model = YOLO("yolov5s.pt")  # RECOMMENDED: smaller + better
+    model = YOLO("yolov5su.pt")  # RECOMMENDED: smaller + better
     print("[INFO] YOLOv5 model loaded successfully")
 except Exception as e:
     print(f"[ERROR] Failed to load YOLO model: {e}")
